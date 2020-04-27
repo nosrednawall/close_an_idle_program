@@ -29,7 +29,7 @@ t_now = dt.now()                                    # Current time for reference
 t_ocioso = min_ocioso*60                            # Tempo ocioso
 t_delta_ocioso = timedelta(0,t_ocioso)              # Time Delta in mins
 
-# import windowns management blablabla
+# import windowns management
 c = wmi.WMI ()
     
 # Inicio das funcoes
