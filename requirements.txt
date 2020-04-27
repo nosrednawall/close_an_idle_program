@@ -1,0 +1,4 @@
+DateTime===4.3
+PySimpleGUI===4.18.2
+WMI===1.4.9
+
