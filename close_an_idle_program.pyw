@@ -14,14 +14,13 @@ from datetime import timedelta
 import winsound
 import PySimpleGUI as sg
 
-# nome e path dos programas
+# nome programa
 PROGRAMA_UM_NOME = "notepad.exe"
-PROGRAMA_UM_PATH = "C:\\Windows\\system32\\notepad.exe"
 PROGRAMA_UM_MENSAGEM = "Notepad"
 
 # Tempo Ocioso
 min_ocioso = 40
-min_entre_checagens = 10
+min_entre_checagens = 10.0
 
 ### Main Script here
 # Collection time information
@@ -39,27 +38,12 @@ def getIdleTime():
     return (win32api.GetTickCount() - win32api.GetLastInputInfo()) / 1000.0
 
 # funcão principal
-def buscaPrograma(nome,path,mensagemPersonalizada):
+def buscaPrograma(nome,mensagemPersonalizada):
     # Entra dentro do OctopusLeclair8
-    if process.Name == nome and process.ExecutablePath == path:
-        #Recebe a data do json de process e remove a parte desnecessária
-        data_cru = process.CreationDate.split('.')
-
-        # Hora de agora
-        data_agora = dt.now()
-
-        # Hora criado em formato objeto datetime
-        data_criado = dt.strptime(data_cru[0], '%Y%m%d%H%M%S')
-        
-        # Calcula a diferença
-        diferenca = timedelta()
-        diferenca = data_agora - data_criado
-
-        #print(process.ProcessId, process.Name, process.ExecutablePath)
-        #print(diferenca)
+    if process.Name == nome :
 
         # Verifica se o valor da diferença do horario de inicialização do programa é maior que 40 minutos e também o tempo ocioso do computador é maior que 40 minutos
-        if diferenca > t_delta_ocioso and getIdleTime() > t_ocioso:
+        if getIdleTime() > t_ocioso:
             winsound.Beep((37*100), 500)
             sg.popup_timed( "Computador Ocioso a mais de "+ repr(min_ocioso) +" minutos\nFechando "+ mensagemPersonalizada +" em 1 minuto" ,auto_close_duration=60)
 
@@ -69,13 +53,15 @@ def buscaPrograma(nome,path,mensagemPersonalizada):
                 winsound.Beep((37*100), 500)
                 sg.Popup(mensagem+mensagemPersonalizada)
                 
+def sleep():
+    tempo = min_entre_checagens * 60.0
+    time.sleep(tempo)
 
 # Loop principal
 while True:
-    
     # Busca os octopus em todos os programas rodando no computador
     for process in c.Win32_Process():
         # Adicione quantos programas desejar
-        buscaPrograma(PROGRAMA_UM_NOME,PROGRAMA_UM_PATH,PROGRAMA_UM_MENSAGEM)
-# Para não sobrecarregar o CPU
-time.sleep(min_entre_checagens * 60)
+        buscaPrograma(PROGRAMA_UM_NOME,PROGRAMA_UM_MENSAGEM)
+    # Para não sobrecarregar o CPU
+    sleep()
